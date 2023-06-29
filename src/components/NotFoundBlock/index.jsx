@@ -3,11 +3,11 @@ import style from "./NotFoundBlock.module.scss";
 
 const NotFoundBlock = () => {
     return (
-        <>
-            <span className={style.root}>😕</span>
+        <div className={style.root}>
+            <span>😕</span>
             <br />
-            <h1>notFoundBlock</h1>
-        </>
+            <h1>Not found!!!</h1>
+        </div>
     );
 };
 

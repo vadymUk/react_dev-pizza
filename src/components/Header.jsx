@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     return (
@@ -10,14 +11,16 @@ const Header = () => {
                         src='img/pizza-logo.svg'
                         alt='Pizza logo'
                     />
-                    <div>
-                        <h1>React Pizza</h1>
-                        <p>самая вкусная пицца во вселенной</p>
-                    </div>
+                    <Link to='/'>
+                        <div>
+                            <h1>React Pizza</h1>
+                            <p>самая вкусная пицца во вселенной</p>
+                        </div>
+                    </Link>
                 </div>
                 <div className='header__cart'>
-                    <a
-                        href='/cart.html'
+                    <Link
+                        to='/cart'
                         className='button button--cart'
                     >
                         <span>520 ₽</span>
@@ -52,7 +55,7 @@ const Header = () => {
                             />
                         </svg>
                         <span>3</span>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>
