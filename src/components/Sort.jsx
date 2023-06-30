@@ -1,12 +1,37 @@
 import React from "react";
 
-const Sort = () => {
+const Sort = ({ sortType, onClickSortType }) => {
     const [open, setOpen] = React.useState(false);
-    const [selected, setSelected] = React.useState(0);
-    const list = ["популярности", "цене", "алфавиту"];
+
+    const list = [
+        {
+            name: "популярности (DESC)",
+            sortProperty: "rating",
+        },
+        {
+            name: "популярности (ASC)",
+            sortProperty: "-rating",
+        },
+        {
+            name: "цене (DESC)",
+            sortProperty: "price",
+        },
+        {
+            name: "цене (ASC)",
+            sortProperty: "-price",
+        },
+        {
+            name: "алфавиту (DESC)",
+            sortProperty: "title",
+        },
+        {
+            name: "алфавиту (ASC)",
+            sortProperty: "-title",
+        },
+    ];
 
     const onClickSelectItem = (index) => {
-        setSelected(index);
+        onClickSortType(index);
         setOpen(false);
     };
 
@@ -26,18 +51,22 @@ const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setOpen(!open)}>{list[selected]}</span>
+                <span onClick={() => setOpen(!open)}>{sortType.name}</span>
             </div>
             {open && (
                 <div className='sort__popup'>
                     <ul>
-                        {list.map((item, i) => (
+                        {list.map((obj, i) => (
                             <li
-                                key={item}
-                                className={selected === i ? "active" : ""}
-                                onClick={() => onClickSelectItem(i)}
+                                key={obj.name}
+                                className={
+                                    sortType.sortProperty === obj.sortProperty
+                                        ? "active"
+                                        : ""
+                                }
+                                onClick={() => onClickSelectItem(obj)}
                             >
-                                {item}
+                                {obj.name}
                             </li>
                         ))}
                     </ul>
