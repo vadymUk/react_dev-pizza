@@ -3,8 +3,9 @@ import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
+import Pagination from "../components/Pagination";
 
-const Home = () => {
+const Home = ({ searchValue }) => {
     const [items, setItem] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [categoryId, setCategoryId] = React.useState(0);
@@ -16,11 +17,12 @@ const Home = () => {
     const sortBY = sortType.sortProperty.replace("-", "");
     const order = sortType.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
+    const search = searchValue ? `&search=${searchValue}` : "";
 
     React.useEffect(() => {
         setIsLoading(true);
         fetch(
-            `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?${category}&sortBy=${sortBY}&order=${order}`
+            `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?${category}&sortBy=${sortBY}&order=${order}${search}`
         )
             .then((res) => {
                 return res.json();
@@ -30,7 +32,7 @@ const Home = () => {
                 setIsLoading(false);
             });
         window.scrollTo(0, 0);
-    }, [categoryId, sortType, sortBY, order, category]);
+    }, [categoryId, sortType, sortBY, order, category, searchValue, search]);
     return (
         <div className='container'>
             <div className='content__top'>
@@ -49,17 +51,29 @@ const Home = () => {
                     ? [...new Array(6)].map((_, index) => (
                           <Skeleton key={index} />
                       ))
-                    : items.map((obj) => (
-                          <PizzaBlock
-                              key={obj.id}
-                              title={obj.title}
-                              price={obj.price}
-                              imageUrl={obj.imageUrl}
-                              sizes={obj.sizes}
-                              types={obj.types}
-                          />
-                      ))}
+                    : items
+                          //   .filter((ob) => {
+                          //       if (
+                          //           ob.title
+                          //               .toLowerCase()
+                          //               .includes(searchValue.toLowerCase())
+                          //       ) {
+                          //           return true;
+                          //       }
+                          //       return false;
+                          //   })
+                          .map((obj) => (
+                              <PizzaBlock
+                                  key={obj.id}
+                                  title={obj.title}
+                                  price={obj.price}
+                                  imageUrl={obj.imageUrl}
+                                  sizes={obj.sizes}
+                                  types={obj.types}
+                              />
+                          ))}
             </div>
+            <Pagination />
         </div>
     );
 };
