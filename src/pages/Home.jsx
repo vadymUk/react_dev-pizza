@@ -1,25 +1,30 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
 import { SearchContext } from "../App";
-import { setCategoryId } from "../redux/slices/filterSlice";
+import { setCategoryId, setPageCount } from "../redux/slices/filterSlice";
 
 const Home = () => {
     const categoryId = useSelector((state) => state.filter.categoryId);
     const sortType = useSelector((state) => state.filter.sort.sortProperty);
+    const courrentPage = useSelector((state) => state.filter.pageCount);
     const dispatch = useDispatch();
 
     const { searchValue } = React.useContext(SearchContext);
-    const [items, setItem] = React.useState([]);
+    const [items, setItems] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
-    const [courrentPage, setCourrentPage] = React.useState(1);
 
     const onChangeCategory = (id) => {
         dispatch(setCategoryId(id));
+    };
+
+    const onChangePage = (num) => {
+        dispatch(setPageCount(num));
     };
 
     const sortBY = sortType.replace("-", "");
@@ -29,16 +34,25 @@ const Home = () => {
 
     React.useEffect(() => {
         setIsLoading(true);
-        fetch(
-            `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${courrentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
-        )
+        // fetch(
+        //     `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${courrentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
+        // )
+        //     .then((res) => {
+        //         return res.json();
+        //     })
+        //     .then((arr) => {
+        //         setItem(arr);
+        //         setIsLoading(false);
+        //     });
+        axios
+            .get(
+                `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${courrentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
+            )
             .then((res) => {
-                return res.json();
-            })
-            .then((arr) => {
-                setItem(arr);
+                setItems(res.data);
                 setIsLoading(false);
             });
+
         window.scrollTo(0, 0);
     }, [
         categoryId,
@@ -87,7 +101,10 @@ const Home = () => {
                               />
                           ))}
             </div>
-            <Pagination onChangePage={(number) => setCourrentPage(number)} />
+            <Pagination
+                currentPage={courrentPage}
+                onChangePage={onChangePage}
+            />
         </div>
     );
 };
