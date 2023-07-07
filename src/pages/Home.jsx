@@ -1,19 +1,26 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Categories from "../components/Categories";
-import Sort from "../components/Sort";
+import Sort, { list } from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
 import { SearchContext } from "../App";
-import { setCategoryId, setPageCount } from "../redux/slices/filterSlice";
+import {
+    setCategoryId,
+    setCurrentPage,
+    setFilters,
+} from "../redux/slices/filterSlice";
+import qs from "qs";
 
 const Home = () => {
     const categoryId = useSelector((state) => state.filter.categoryId);
     const sortType = useSelector((state) => state.filter.sort.sortProperty);
-    const courrentPage = useSelector((state) => state.filter.pageCount);
+    const currentPage = useSelector((state) => state.filter.currentPage);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { searchValue } = React.useContext(SearchContext);
     const [items, setItems] = React.useState([]);
@@ -24,8 +31,23 @@ const Home = () => {
     };
 
     const onChangePage = (num) => {
-        dispatch(setPageCount(num));
+        dispatch(setCurrentPage(num));
     };
+
+    React.useEffect(() => {
+        if (window.location.search) {
+            const params = qs.parse(window.location.search.slice(1));
+            const sort = list.find(
+                (obj) => obj.sortProperty === params.sortProperty
+            );
+            dispatch(
+                setFilters({
+                    ...params,
+                    sort,
+                })
+            );
+        }
+    }, [dispatch]);
 
     const sortBY = sortType.replace("-", "");
     const order = sortType.includes("-") ? "asc" : "desc";
@@ -46,7 +68,7 @@ const Home = () => {
         //     });
         axios
             .get(
-                `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${courrentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
+                `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
             )
             .then((res) => {
                 setItems(res.data);
@@ -62,8 +84,16 @@ const Home = () => {
         category,
         searchValue,
         search,
-        courrentPage,
+        currentPage,
     ]);
+    React.useEffect(() => {
+        const queryString = qs.stringify({
+            sortType,
+            categoryId,
+            currentPage,
+        });
+        navigate(`?${queryString}`);
+    }, [categoryId, currentPage, navigate, sortType]);
     return (
         <div className='container'>
             <div className='content__top'>
@@ -102,7 +132,7 @@ const Home = () => {
                           ))}
             </div>
             <Pagination
-                currentPage={courrentPage}
+                currentPage={currentPage}
                 onChangePage={onChangePage}
             />
         </div>
