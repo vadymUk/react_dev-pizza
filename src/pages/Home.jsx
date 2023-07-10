@@ -21,6 +21,8 @@ const Home = () => {
     const currentPage = useSelector((state) => state.filter.currentPage);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isSearch = React.useRef(false);
+    const isMounted = React.useRef(false);
 
     const { searchValue } = React.useContext(SearchContext);
     const [items, setItems] = React.useState([]);
@@ -32,6 +34,18 @@ const Home = () => {
 
     const onChangePage = (num) => {
         dispatch(setCurrentPage(num));
+    };
+
+    const fetchPizzas = () => {
+        setIsLoading(true);
+        axios
+            .get(
+                `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
+            )
+            .then((res) => {
+                setItems(res.data);
+                setIsLoading(false);
+            });
     };
 
     React.useEffect(() => {
@@ -46,6 +60,7 @@ const Home = () => {
                     sort,
                 })
             );
+            isSearch.current = true;
         }
     }, [dispatch]);
 
@@ -55,27 +70,13 @@ const Home = () => {
     const search = searchValue ? `&search=${searchValue}` : "";
 
     React.useEffect(() => {
-        setIsLoading(true);
-        // fetch(
-        //     `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${courrentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
-        // )
-        //     .then((res) => {
-        //         return res.json();
-        //     })
-        //     .then((arr) => {
-        //         setItem(arr);
-        //         setIsLoading(false);
-        //     });
-        axios
-            .get(
-                `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
-            )
-            .then((res) => {
-                setItems(res.data);
-                setIsLoading(false);
-            });
+        if (!isSearch.current) {
+            fetchPizzas();
+        }
+        isSearch.current = false;
 
         window.scrollTo(0, 0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         categoryId,
         sortType,
@@ -87,12 +88,15 @@ const Home = () => {
         currentPage,
     ]);
     React.useEffect(() => {
-        const queryString = qs.stringify({
-            sortType,
-            categoryId,
-            currentPage,
-        });
-        navigate(`?${queryString}`);
+        if (isMounted.current) {
+            const queryString = qs.stringify({
+                sortType,
+                categoryId,
+                currentPage,
+            });
+            navigate(`?${queryString}`);
+        }
+        isMounted.current = true;
     }, [categoryId, currentPage, navigate, sortType]);
     return (
         <div className='container'>
