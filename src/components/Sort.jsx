@@ -39,6 +39,19 @@ const Sort = () => {
         setOpen(false);
     };
 
+    React.useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.id.includes("sort")) {
+                setOpen(false);
+            }
+        };
+        document.body.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.body.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className='sort'>
             <div className='sort__label'>
@@ -55,13 +68,19 @@ const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setOpen(!open)}>{sort.name}</span>
+                <span
+                    id='sort'
+                    onClick={() => setOpen(!open)}
+                >
+                    {sort.name}
+                </span>
             </div>
             {open && (
                 <div className='sort__popup'>
                     <ul>
                         {list.map((obj, i) => (
                             <li
+                                id='sort'
                                 key={obj.name}
                                 className={
                                     sort.sortProperty === obj.sortProperty
