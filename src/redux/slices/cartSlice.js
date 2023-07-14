@@ -50,10 +50,27 @@ export const cartSlice = createSlice({
             state.items = [];
             state.totalPrice = 0;
         },
+        totalPricePlus: (state) => {
+            state.totalPrice = state.items.reduce((sum, obj) => {
+                return obj.price * obj.count + sum;
+            }, 0);
+        },
+        totalPriceMinus: (state) => {
+            state.totalPrice = state.items.reduce((sum, obj) => {
+                return obj.price * obj.count + obj.price - obj.price + sum;
+            }, 0);
+        },
     },
 });
 
-export const { addItem, removeItem, plusItem, minusItem, clearItems } =
-    cartSlice.actions;
+export const {
+    addItem,
+    removeItem,
+    plusItem,
+    minusItem,
+    clearItems,
+    totalPricePlus,
+    totalPriceMinus,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
