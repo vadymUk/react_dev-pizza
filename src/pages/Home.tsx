@@ -14,22 +14,26 @@ import {
 import qs from "qs";
 import { fetchPizzas } from "../redux/slices/pizzaSlice";
 
-const Home = () => {
-    const categoryId = useSelector((state) => state.filter.categoryId);
-    const sortType = useSelector((state) => state.filter.sort.sortProperty);
-    const { currentPage, searchValue } = useSelector((state) => state.filter);
-    const items = useSelector((state) => state.pizza.items);
-    const status = useSelector((state) => state.pizza.status);
+const Home: React.FC = () => {
+    const categoryId = useSelector((state: any) => state.filter.categoryId);
+    const sortType = useSelector(
+        (state: any) => state.filter.sort.sortProperty
+    );
+    const { currentPage, searchValue } = useSelector(
+        (state: any) => state.filter
+    );
+    const items = useSelector((state: any) => state.pizza.items);
+    const status = useSelector((state: any) => state.pizza.status);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isSearch = React.useRef(false);
     const isMounted = React.useRef(false);
 
-    const onChangeCategory = (id) => {
+    const onChangeCategory = (id: number) => {
         dispatch(setCategoryId(id));
     };
 
-    const onChangePage = (num) => {
+    const onChangePage = (num: number) => {
         dispatch(setCurrentPage(num));
     };
 
@@ -39,6 +43,7 @@ const Home = () => {
     const search = searchValue ? `&search=${searchValue}` : "";
 
     const getPizzas = async () => {
+        // @ts-ignore
         dispatch(fetchPizzas({ sortBY, order, category, search, currentPage }));
 
         window.scrollTo(0, 0);
@@ -109,7 +114,7 @@ const Home = () => {
                         ? [...new Array(6)].map((_, index) => (
                               <Skeleton key={index} />
                           ))
-                        : items.map((obj) => (
+                        : items.map((obj: any) => (
                               <PizzaBlock
                                   key={obj.id}
                                   id={obj.id}
