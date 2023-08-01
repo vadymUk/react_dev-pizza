@@ -1,40 +1,40 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSort } from "../redux/slices/filterSlice";
+import { SortPropertyEnum, setSort } from "../redux/slices/filterSlice";
 
 type SortItem = {
     name: string;
-    sortProperty: string;
+    sortProperty: SortPropertyEnum;
 };
 
 export const list: SortItem[] = [
     {
         name: "популярности (DESC)",
-        sortProperty: "rating",
+        sortProperty: SortPropertyEnum.RATING_DESC,
     },
     {
         name: "популярности (ASC)",
-        sortProperty: "-rating",
+        sortProperty: SortPropertyEnum.RATING_ASC,
     },
     {
         name: "цене (DESC)",
-        sortProperty: "price",
+        sortProperty: SortPropertyEnum.PRICE_DESC,
     },
     {
         name: "цене (ASC)",
-        sortProperty: "-price",
+        sortProperty: SortPropertyEnum.PRICE_ASC,
     },
     {
         name: "алфавиту (DESC)",
-        sortProperty: "title",
+        sortProperty: SortPropertyEnum.TITLE_DESC,
     },
     {
         name: "алфавиту (ASC)",
-        sortProperty: "-title",
+        sortProperty: SortPropertyEnum.TITLE_ASC,
     },
 ];
 
-const Sort = () => {
+const SortPopup = () => {
     const dispatch = useDispatch();
     const sort = useSelector((state: any) => state.filter.sort);
     const [open, setOpen] = React.useState(false);
@@ -45,8 +45,8 @@ const Sort = () => {
     };
 
     React.useEffect(() => {
-        const handleClickOutside = (e: any) => {
-            if (!e.target.id.includes("sort")) {
+        const handleClickOutside = (event: any) => {
+            if (!event.target?.id.includes("sort")) {
                 setOpen(false);
             }
         };
@@ -104,4 +104,4 @@ const Sort = () => {
     );
 };
 
-export default Sort;
+export default SortPopup;

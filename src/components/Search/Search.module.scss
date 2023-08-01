@@ -34,3 +34,14 @@
         opacity: 0.8;
     }
 }
+@media (max-width: 1320px) {
+    .root {
+        left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .input {
+        width: 300px;
+    }
+}

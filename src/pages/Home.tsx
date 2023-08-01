@@ -1,18 +1,19 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Categories from "../components/Categories";
 import Sort, { list } from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
+import { useAppDispatch } from "../redux/store";
 import {
     setCategoryId,
     setCurrentPage,
     setFilters,
 } from "../redux/slices/filterSlice";
 import qs from "qs";
-import { fetchPizzas } from "../redux/slices/pizzaSlice";
+import { SearchPizzaParams, fetchPizzas } from "../redux/slices/pizzaSlice";
 
 const Home: React.FC = () => {
     const categoryId = useSelector((state: any) => state.filter.categoryId);
@@ -24,7 +25,7 @@ const Home: React.FC = () => {
     );
     const items = useSelector((state: any) => state.pizza.items);
     const status = useSelector((state: any) => state.pizza.status);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isSearch = React.useRef(false);
     const isMounted = React.useRef(false);
@@ -43,7 +44,6 @@ const Home: React.FC = () => {
     const search = searchValue ? `&search=${searchValue}` : "";
 
     const getPizzas = async () => {
-        // @ts-ignore
         dispatch(fetchPizzas({ sortBY, order, category, search, currentPage }));
 
         window.scrollTo(0, 0);
@@ -51,14 +51,17 @@ const Home: React.FC = () => {
 
     React.useEffect(() => {
         if (window.location.search) {
-            const params = qs.parse(window.location.search.slice(1));
-            const sort = list.find(
-                (obj) => obj.sortProperty === params.sortProperty
-            );
+            const params = qs.parse(
+                window.location.search.slice(1)
+            ) as unknown as SearchPizzaParams;
+            const sort = list.find((obj) => obj.sortProperty === params.sortBY);
+
             dispatch(
                 setFilters({
-                    ...params,
-                    sort,
+                    searchValue: params.search,
+                    categoryId: Number(params.category),
+                    currentPage: Number(params.currentPage),
+                    sort: sort ? sort : list[0],
                 })
             );
             isSearch.current = true;

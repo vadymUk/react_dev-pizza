@@ -1,20 +1,49 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchPizzas = createAsyncThunk(
+export type SearchPizzaParams = {
+    sortBY: string;
+    order: string;
+    category: string;
+    search: string;
+    currentPage: string
+}
+
+
+export const fetchPizzas = createAsyncThunk<Pizza[], SearchPizzaParams >(
     "pizza/fetchPizzaStatus",
     async (params) => {
         const { sortBY, order, category, search, currentPage } = params;
-        const response = await axios.get(
+        const {data} = await axios.get<Pizza[]>(
             `https://637cfd3b9c2635df8f7f0355.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBY}&order=${order}${search}`
         );
-        return response.data;
+        return data;
     }
 );
 
-const initialState = {
+export enum Status {
+    LOADING = "loading",
+    SUCCESS = "success",
+    ERROR = "error"
+}
+
+type Pizza = {
+    id: string;
+    title: string;
+    price: number;
+    imageUrl: string;
+    sizes: number[];
+    types: number[];
+};
+
+interface PizzaSliceState{
+    items:Pizza[];
+    status:Status;
+}
+
+const initialState: PizzaSliceState = {
     items: [],
-    status: "loading",
+    status: Status.LOADING
 };
 
 export const pizzasSlice = createSlice({
@@ -24,19 +53,18 @@ export const pizzasSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(fetchPizzas.pending, (state) => {
             state.items = [];
-            state.status = "loading";
+            state.status = Status.LOADING;
         });
         builder.addCase(fetchPizzas.fulfilled, (state, action) => {
             state.items = action.payload;
-            state.status = "success";
+            state.status = Status.SUCCESS;
         });
-        builder.addCase(fetchPizzas.rejected, (state, action) => {
+        builder.addCase(fetchPizzas.rejected, (state) => {
             state.items = [];
-            state.status = "error";
+            state.status = Status.ERROR;
         });
     },
 });
 
-export const { setItems } = pizzasSlice.actions;
 
 export default pizzasSlice.reducer;
