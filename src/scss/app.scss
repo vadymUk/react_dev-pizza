@@ -111,6 +111,7 @@ body {
 .cart {
     &__top {
         display: flex;
+        gap: 20px;
         justify-content: space-between;
         align-items: center;
     }
@@ -173,12 +174,19 @@ body {
         border-top: 1px solid $gray-line;
         padding-top: 30px;
         margin-top: 30px;
+        @media (max-width: 750px) {
+            display: block;
+        }
 
         &-img {
             display: flex;
             align-items: center;
             margin-right: 15px;
             width: 10%;
+            @media (max-width: 750px) {
+                margin-right: 0;
+                margin-left: 40%;
+            }
 
             img {
                 width: 80px;
@@ -191,6 +199,10 @@ body {
             flex-direction: column;
             justify-content: center;
             width: 40%;
+            @media (max-width: 750px) {
+                margin-left: 35%;
+                width: 53%;
+            }
 
             h3 {
                 font-weight: bold;
@@ -210,6 +222,10 @@ body {
             align-items: center;
             justify-content: space-between;
             width: 13%;
+            @media (max-width: 750px) {
+                margin-left: 40%;
+                margin-top: 15px;
+            }
 
             &-minus {
                 svg {
@@ -245,6 +261,10 @@ body {
             align-items: center;
             justify-content: center;
             width: 33%;
+            @media (max-width: 750px) {
+                margin-left: 35%;
+                margin-top: 15px;
+            }
 
             b {
                 font-weight: bold;
@@ -258,6 +278,11 @@ body {
             align-items: center;
             justify-content: flex-end;
             width: 4%;
+            @media (max-width: 750px) {
+                display: block;
+                margin-left: 45%;
+                margin-top: 15px;
+            }
 
             .button {
                 border-color: darken($color: $gray-line, $amount: 10);
@@ -291,10 +316,14 @@ body {
 
         &-details {
             display: flex;
+            gap: 20px;
             justify-content: space-between;
 
             span {
                 font-size: 22px;
+                @media (max-width: 450px) {
+                    font-size: 15px;
+                }
 
                 &:last-of-type {
                     b {
@@ -306,6 +335,7 @@ body {
 
         &-buttons {
             display: flex;
+            gap: 20px;
             justify-content: space-between;
             margin-top: 40px;
 
@@ -352,7 +382,7 @@ body {
 
     &--empty {
         margin: 80px auto;
-        width: 560px;
+        max-width: 560px;
         text-align: center;
 
         h2 {
